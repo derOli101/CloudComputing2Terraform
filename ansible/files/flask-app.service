@@ -1,0 +1,15 @@
+[Unit]
+Description=Flask Fitness App
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/flask-app.env
+User=azureuser
+WorkingDirectory=/home/azureuser/flask-app
+ExecStart=/usr/bin/python3 /home/azureuser/flask-app/app.py
+Environment=FLASK_ENV=production
+Environment=PYTHONUNBUFFERED=1
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

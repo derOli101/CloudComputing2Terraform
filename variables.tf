@@ -27,3 +27,14 @@ variable "postgres_password" {
   description = "PostgreSQL-Passwort"
   sensitive   = true
 }
+
+variable "openai_api_key" {
+  description = "API Key für OpenAI"
+  type        = string
+  sensitive   = true
+}
+
+variable "admin_password" {
+  description = "Admin-Passwort"
+  sensitive = true
+}
