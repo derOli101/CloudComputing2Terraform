@@ -1,45 +1,51 @@
-- name: Deploy Flask Fitness App
-  hosts: all
-  become: true
+- name: Deploy Flask Fitness App # Titel des Playbooks
+  hosts: all # Ziel: alle definierten Hosts
+  become: true # Root-Rechte für alle Tasks
 
   vars:
-    repo_url: "https://github.com/derOli101/CloudComputing2.git"
-    app_dir: "/home/azureuser/flask-app"
+    repo_url: "https://github.com/derOli101/CloudComputing2.git" # Git-Repo mit der Flask-App
+    app_dir: "/home/azureuser/flask-app" # Zielverzeichnis auf dem Server
 
   tasks:
+    # Task 1: Systempakete aktualisieren und Abhängigkeiten installieren
     - name: Update APT cache & install dependencies
       apt:
         update_cache: yes
         name:
-          - git
-          - python3
-          - python3-pip
+          - git # Zum Klonen des Repositories
+          - python3 # Python-Interpreter
+          - python3-pip # Paketmanager für Python
 
+    # Task 2: Git-Repository mit der Flask-App klonen
     - name: Clone Flask App from Git
       git:
-        repo: "{{ repo_url }}"
-        dest: "{{ app_dir }}"
-        version: main
+        repo: "{{ repo_url }}" # Repo-URL aus Variablen
+        dest: "{{ app_dir }}" # Zielverzeichnis
+        version: main # Branch, der ausgecheckt werden soll
 
+    # Task 3: Python-Abhängigkeiten über pip installieren
     - name: Install Python requirements
       pip:
-        requirements: "{{ app_dir }}/requirements.txt"
-        executable: pip3
+        requirements: "{{ app_dir }}/requirements.txt" # Requirements-Datei aus dem geklonten Repo
+        executable: pip3 # Nutzung von Python 3
 
+    # Task 4: systemd-Service-Datei kopieren (damit die App als Dienst läuft)
     - name: Copy systemd service file
       copy:
-        src: flask-app.service
-        dest: /etc/systemd/system/flask-app.service
+        src: flask-app.service # Lokale Datei im Ansible-Projekt (nicht im Repo!)
+        dest: /etc/systemd/system/flask-app.service # Zielort für systemd-Dienste
         owner: root
         group: root
         mode: "0644"
 
+    # Task 5: systemd neu laden, damit der neue Dienst erkannt wird
     - name: Reload systemd daemon
       systemd:
         daemon_reload: yes
 
+    # Task 6: Flask-App aktivieren (Autostart) und direkt starten
     - name: Enable and start Flask app
       systemd:
         name: flask-app
-        enabled: yes
-        state: started
+        enabled: yes # Dienst beim Systemstart aktivieren
+        state: started # Dienst sofort starten

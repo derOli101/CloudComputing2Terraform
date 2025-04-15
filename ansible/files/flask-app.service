@@ -1,15 +1,16 @@
 [Unit]
-Description=Flask Fitness App
-After=network.target
+Description=Flask Fitness App         # Beschreibung des Dienstes
+After=network.target                  # Start erst nach der Netzwerkkonfiguration
 
 [Service]
-EnvironmentFile=/etc/flask-app.env
-User=azureuser
-WorkingDirectory=/home/azureuser/flask-app
-ExecStart=/usr/bin/python3 /home/azureuser/flask-app/app.py
-Environment=FLASK_ENV=production
-Environment=PYTHONUNBUFFERED=1
-Restart=always
+EnvironmentFile=/etc/flask-app.env   # Optional: separate Datei mit Umgebungsvariablen (wie API-Keys)
+User=azureuser                       # Benutzer, unter dem der Dienst läuft
+WorkingDirectory=/home/azureuser/flask-app     # Arbeitsverzeichnis, in dem sich die App befindet
+ExecStart=/usr/bin/python3 /home/azureuser/flask-app/app.py  # Befehl zum Starten der App
+
+Environment=FLASK_ENV=production     # Setzt Flask in Produktionsmodus
+Environment=PYTHONUNBUFFERED=1       # Sorgt für sofortige Log-Ausgabe ohne Pufferung (wichtig fürs Logging)
+Restart=always                       # Dienst bei Absturz automatisch neu starten
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=multi-user.target           # Startet automatisch beim Systemstart (normaler Runlevel)
